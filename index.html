@@ -14,10 +14,28 @@
     <script type="text/javascript">
       $(document).ready(function() {
         $('button').click(function(event) {
-            console.log('clicked');
-            $.get('207.154.214.64:5000/api/record/1', function(data) {
-                alert(data);
-            });
+            event.preventDefault();
+            var query = $('#src-box').val();
+            $.ajax({
+              url: 'http://207.154.214.64:5000/api/records/',
+              type: 'GET',
+              dataType:"json",
+              data: {'q':query,'page':'1','size':'10'},
+              success: function(result,status,xhr) {
+              var numOfResult = result['hits']['total'] 
+              for (var i = 0; i < numOfResult; i++) {
+                console.log(result['hits']['hits'][i]['metadata']);
+                console.log(result['hits']['hits'][i]['metadata']['main_entry_personal_name']['personal_name']);    
+                console.log(result['hits']['hits'][i]['metadata']['summary'][0]['summary']);
+                console.log(result['hits']['hits'][i]['metadata']['title_statement']['title']);       
+              }
+              
+              }
+            })
+            .fail(function(xhr,status,error) {
+              console.log("error:" + error);
+            })
+            
         });
       });
     </script>
@@ -26,7 +44,7 @@
     <div id="main" class="container-fluid main-container text-center">
       <div class="row">
         <form>
-          <input type="text" class="form-control src-box" id="query" placeholder="Bir kitap adı, yazar veya kitap türü yazın...">
+          <input type="text" class="form-control src-box" id="src-box" placeholder="Bir kitap adı, yazar veya kitap türü yazın...">
           <br>
           <button type="submit" class="btn btn-default src-btn">ARA</button>
         </form>
