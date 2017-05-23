@@ -30,14 +30,18 @@
               console.log(result['numOfResult']);
               var record; 
               for (var i = 0; i < result['numOfResult']; i++) {
-                console.log(response['hits']['hits'][i]['metadata']);
+                //console.log(response['hits']['hits'][i]['metadata']);
                 record = {'title':'','author':'','summary':''};
-                record['author'] = response['hits']['hits'][i]['metadata']['main_entry_personal_name']['personal_name'];
-                if (response['hits']['hits'][i]['metadata']['summary'][0] != null && response['hits']['hits'][i]['metadata']['summary'][0] !== undefined) {
+                if (response['hits']['hits'][i] != null && response['hits']['hits'][i] !== undefined && response['hits']['hits'][i]['metadata']['main_entry_personal_name'] != null && response['hits']['hits'][i]['metadata']['main_entry_personal_name'] !== undefined) {
+                  record['author'] = response['hits']['hits'][i]['metadata']['main_entry_personal_name']['personal_name'];
+                }
+                if (response['hits']['hits'][i] != null && response['hits']['hits'][i]['metadata']['summary'] != null && response['hits']['hits'][i]['metadata']['summary'] !== undefined) {
                   record['summary'] = response['hits']['hits'][i]['metadata']['summary'][0]['summary']; 
                 }
-                
-                record['title'] = response['hits']['hits'][i]['metadata']['title_statement']['title'];
+
+                if (response['hits']['hits'][i] != null && response['hits']['hits'][i] !== undefined) {
+                    record['title'] = response['hits']['hits'][i]['metadata']['title_statement']['title'];
+                  }
 
                 result['records'].push(record);
               }
