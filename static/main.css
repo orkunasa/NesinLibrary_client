@@ -17,3 +17,13 @@ body{
 .logo{
 	height:120px;
 }
+
+.result{
+	padding-left: 40px;
+    padding-right: 40px
+}
+
+.text{
+	font-size:20px;
+	font-weight: bold;
+}

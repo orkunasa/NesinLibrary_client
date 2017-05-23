@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>NMK - Kütüphane Sistemi</title>
+        <!--
+        <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+        -->
+        <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="static/main.css">
+        <link rel="stylesheet" type="text/css" href="main.js">
+        <script>
+          window.$ = window.JQuery = require("jquery");
+        </script>
+        <script type="text/javascript">
+            require('electron').ipcRenderer.on('result', (event, result) => {
+              console.log(result)  // Prints the result
+              $('#num-of-result').html(result['numOfResult']);
+              var title;
+              var author;
+              var summary;
+              for(var i = 0; i < result['numOfResult'];i++){
+                console.log(i);
+                title = result['records'][i]['title'];
+                author = result['records'][i]['author'];
+                summary = result['records'][i]['summary'];
+
+                $('#results').append('<div class="box result" style="border: 1px solid black;margin-top: 20px;padding-top: 15px;padding-bottom:15px;"><div class="row"><div id="col-md-12"><div class="row"><span class="text">Title: </span>'+ title +'</div><div class="row"><span class="text">Author: </span>'+ author +'</div><div class="row"><span class="text">Summary: </span>' + summary + '</div></div></div></div>');
+              }
+            })
+        </script>
+    </head>
+    <body>
+        <div id="main" class="container-fluid main-container" style="margin-left:50px;">
+            <div class="row" style="margin-top:50px;">
+                <div class="col-md-12">
+                    Found <span id="num-of-result"></span> results.
+                </div>
+            </div>
+            <div id="results">
+                
+            </div>
+        </div>
+            <div class="text-center">
+                <br>
+                <img class="logo" src="static/images/nmk_logo.png">
+            </div>
+            
+    </body>
+</html>

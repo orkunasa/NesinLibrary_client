@@ -8,6 +8,7 @@
     -->
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="static/main.css">
+    <link rel="stylesheet" type="text/css" href="main.js">
     <script>
       window.$ = window.JQuery = require("jquery");
     </script>
@@ -15,28 +16,70 @@
       $(document).ready(function() {
         $('button').click(function(event) {
             event.preventDefault();
+            var result = {'numOfResult':0,'records':[]};
+
             var query = $('#src-box').val();
+            if (query != '') {
             $.ajax({
               url: 'http://207.154.214.64:5000/api/records/',
               type: 'GET',
               dataType:"json",
               data: {'q':query,'page':'1','size':'10'},
-              success: function(result,status,xhr) {
-              var numOfResult = result['hits']['total'] 
-              for (var i = 0; i < numOfResult; i++) {
-                console.log(result['hits']['hits'][i]['metadata']);
-                console.log(result['hits']['hits'][i]['metadata']['main_entry_personal_name']['personal_name']);    
-                console.log(result['hits']['hits'][i]['metadata']['summary'][0]['summary']);
-                console.log(result['hits']['hits'][i]['metadata']['title_statement']['title']);       
+              success: function(response,status,xhr) {
+              result['numOfResult'] = response['hits']['total']
+              console.log(result['numOfResult']);
+              var record; 
+              for (var i = 0; i < result['numOfResult']; i++) {
+                console.log(response['hits']['hits'][i]['metadata']);
+                record = {'title':'','author':'','summary':''};
+                record['author'] = response['hits']['hits'][i]['metadata']['main_entry_personal_name']['personal_name'];
+                if (response['hits']['hits'][i]['metadata']['summary'][0] != null && response['hits']['hits'][i]['metadata']['summary'][0] !== undefined) {
+                  record['summary'] = response['hits']['hits'][i]['metadata']['summary'][0]['summary']; 
+                }
+                
+                record['title'] = response['hits']['hits'][i]['metadata']['title_statement']['title'];
+
+                result['records'].push(record);
               }
+
+            //Open new win to show results
+            const remote = require('electron').remote;
+            const BrowserWindow = remote.BrowserWindow;
+            const {webContents} = require('electron')
+            let win = new BrowserWindow({ width: 800, height: 600 });
+            const url = require('url');//To-do: fix this, Already defined in main.js
+            const path = require('path'); //To-do: fix this, already defined in main.js
+
+            //win.webContents.openDevTools()
+
+            //Send data to new page
+            //To-do: Right way?
+            win.webContents.on('did-finish-load', () => {
+              win.webContents.send('result', result)
+            });
+           
+
+            win.loadURL(url.format({
+              pathname: path.join(__dirname, 'result.html'),
+              protocol: 'file:',
+              slashes: true
+            }))
+
+
               
               }
             })
             .fail(function(xhr,status,error) {
               console.log("error:" + error);
-            })
+            });
+
+            } 
+            else {
+              console.log('No input')
+            }
             
         });
+
       });
     </script>
   </head>
